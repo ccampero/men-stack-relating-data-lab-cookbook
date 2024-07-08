@@ -14,6 +14,8 @@ const foodsController = require('./controllers/foods.js');
 
 const port = process.env.PORT ? process.env.PORT : '3000';
 
+app.set('view engine', 'ejs');
+
 mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connection.on('connected', () => {
