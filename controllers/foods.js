@@ -49,8 +49,10 @@ router.delete('/:foodId', async (req, res) => {
       const user = await User.findById(req.session.user._id);
       if (!user) return res.redirect('/');
   
-      user.pantry.id(req.params.foodId).remove(); // Remove the food item from pantry
-      await user.save();
+      await User.findByIdAndUpdate(req.session.user._id, {
+        $pull: { pantry: { _id: req.params.foodId } }
+      });
+  
       res.redirect(`/users/${req.session.user._id}/foods`);
     } catch (err) {
       console.error(err);
@@ -89,5 +91,51 @@ router.delete('/:foodId', async (req, res) => {
       res.redirect('/');
     }
   });
+
+  router.put('/:itemId', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+      if (!user) {
+        console.log("User not found");
+        return res.redirect('/');
+      }
+      
+      const foodItem = user.pantry.id(req.params.itemId);
+      if (!foodItem) {
+        console.log("Food item not found");
+        return res.redirect(`/users/${req.params.userId}/foods`);
+      }
+  
+      foodItem.name = req.body.name;
+      await user.save();
+  
+      res.redirect(`/users/${req.params.userId}/foods`);
+    } catch (err) {
+      console.error("Error updating food item:", err);
+      res.redirect('/');
+    }
+  });
+
+  router.get('/community', async (req, res) => {
+    try {
+       const users = await User.find();
+        res.render('community/index', { users }); 
+    } catch (err) {
+        console.error(err);
+        res.redirect('/'); 
+    }
+});
+
+router.get('/', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+      if (!user) return res.redirect('/'); 
+      res.render('foods/index', { user, pantry: user.pantry });
+    } catch (err) {
+      console.error(err);
+      res.redirect('/'); 
+    }
+  });
+  
 
 module.exports = router;

@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Pantry</title>
-  </head>
-  <body>
-    <%- include('../partials/_navbar.ejs') %>
-      <h1>Welcome to my Pantry</h1>
-      <a href="/users/<%=user._id%>/foods/new">Add a Food Item</a>
-      <ul>
-        <% pantry.forEach(food => { %>
-          <li>
-            <%= food.name %>
-            <form action="/users/<%= user._id %>/foods/<%= food._id %>?_method=DELETE" method="POST">
-              <button type="submit">Delete</button>
-            </form>
-          </li>
-        <% }) %>
-      </ul>
-  
-      <% if (pantry.length === 0) { %>
-        <p>There are no items in this pantry.</p>
-      <% } %>
-  
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Pantry</title>
+</head>
+<body>
+  <%- include('../partials/_navbar.ejs') %>
+    <h1>Welcome to my Pantry</h1>
+  <a href="/users/<%= user._id %>/foods/new">Add a Food Item</a>
+  <ul>
+    <% pantry.forEach(food => { %>
+      <li>
+        <%= food.name %>
+        <a href="/users/<%= user._id %>/foods/<%= food._id %>/edit">Edit</a>
+        <form id="deleteForm-<%= food._id %>" action="/users/<%= user._id %>/foods/<%= food._id %>?_method=DELETE" method="POST" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</body>
 </html>
